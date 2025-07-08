@@ -90,6 +90,7 @@ async function benchmark() {
   const zstdLevels = [1, 3, 6, 15, 22];
   const zstdResults = zstdLevels.map((level) => {
     // You can add more params (e.g., strategy) if needed
+
     const params = { [zlib.constants.ZSTD_c_compressionLevel]: level };
     const start = process.hrtime.bigint();
     const compressed = zstdCompress(transactions, params);
@@ -108,10 +109,25 @@ async function benchmark() {
       library: "node:zlib",
       compressTimeMs: compressTime.toFixed(2),
       decompressTimeMs: decompressTime.toFixed(2),
-      compressedSize: compressed.byteLength,
+      compressedSizeMB: (compressed.byteLength / (1024 * 1024)).toFixed(2),
       correct: isCorrect,
     };
   });
+
+  // Zstd default benchmark (no params)
+  const zstdDefaultStart = process.hrtime.bigint();
+  const zstdDefaultCompressed = zlib.zstdCompressSync(
+    Buffer.from(JSON.stringify(transactions))
+  );
+  const zstdDefaultCompressTime =
+    Number(process.hrtime.bigint() - zstdDefaultStart) / 1e6;
+
+  const zstdDefaultDecompressStart = process.hrtime.bigint();
+  const zstdDefaultDecompressed = zstdDecompress(zstdDefaultCompressed);
+  const zstdDefaultDecompressTime =
+    Number(process.hrtime.bigint() - zstdDefaultDecompressStart) / 1e6;
+  const zstdDefaultCorrect =
+    JSON.stringify(zstdDefaultDecompressed) === JSON.stringify(transactions);
 
   console.table([
     {
@@ -119,12 +135,31 @@ async function benchmark() {
       library: "node:zlib",
       compressTimeMs: gzipCompressTime.toFixed(2),
       decompressTimeMs: gzipDecompressTime.toFixed(2),
-      compressedSize: gzipCompressed.byteLength,
+      compressedSizeMB: (gzipCompressed.byteLength / (1024 * 1024)).toFixed(2),
       correct:
         JSON.stringify(gzipDecompressed) === JSON.stringify(transactions),
     },
+    {
+      algo: "zstd (default)",
+      library: "node:zlib",
+      compressTimeMs: zstdDefaultCompressTime.toFixed(2),
+      decompressTimeMs: zstdDefaultDecompressTime.toFixed(2),
+      compressedSizeMB: (
+        zstdDefaultCompressed.byteLength /
+        (1024 * 1024)
+      ).toFixed(2),
+      correct: zstdDefaultCorrect,
+    },
     ...zstdResults,
   ]);
+
+  /*
+    Zstd default parameters in Node.js (zstdCompressSync without params):
+    - Compression level: 3 (zlib.constants.ZSTD_c_compressionLevel)
+    - Strategy: FAST (zlib.constants.ZSTD_c_strategy = 1)
+    - All other advanced params: library defaults (see Node.js zlib docs)
+    See: https://nodejs.org/api/zlib.html#zstd-constants
+  */
 }
 
 benchmark();

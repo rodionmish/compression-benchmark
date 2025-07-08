@@ -107,7 +107,7 @@ async function benchmark() {
       compressTimeMs: compressTime.toFixed(2), // Wall time for compression
       cpuDeltaMs: cpuDeltaMs.toFixed(2), // CPU time for compression
       decompressTimeMs: decompressTime.toFixed(2),
-      compressedSize: compressed.byteLength,
+      compressedSizeMB: (compressed.byteLength / (1024 * 1024)).toFixed(2),
       correct: isCorrect,
     };
   });

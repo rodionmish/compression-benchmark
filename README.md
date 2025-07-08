@@ -57,6 +57,62 @@ This project benchmarks and compares the performance and compression efficiency 
 └─────────┴──────────────────────┴─────────────┴────────────────┴──────────────────┴────────────────┴─────────┘
 ```
 
+## Zstd Compression Parameters Example
+
+You can fine-tune zstd compression in Node.js using the `params` option. Here are the most relevant parameters (see [Node.js zlib zstd constants](https://nodejs.org/api/zlib.html#zstd-constants)):
+
+```js
+params: {
+  // Compression level: 1 (fastest) to 22 (strongest)
+  [zlib.constants.ZSTD_c_compressionLevel]: 3,
+
+  // Compression strategy: affects match search behavior and tradeoffs
+  // Options: FAST < DFAST < GREEDY < LAZY < LAZY2 < BTLAZY2 < BTOPT < BTULTRA < BTULTRA2
+  [zlib.constants.ZSTD_c_strategy]: zlib.constants.ZSTD_STRATEGY_FAST,
+
+  // Enable or disable Long Distance Matching (LDM)
+  // Useful for large payloads (multi-megabyte)
+  [zlib.constants.ZSTD_c_enableLongDistanceMatching]: 0,
+
+  // Maximum search window size (log2). Example: 27 → 128MB
+  // Larger values increase compression ratio but use more memory
+  [zlib.constants.ZSTD_c_windowLog]: 27,
+
+  // Size of the hash table used to find matches (log2)
+  [zlib.constants.ZSTD_c_hashLog]: 26,
+
+  // Match chain length (log2) — used by certain strategies
+  [zlib.constants.ZSTD_c_chainLog]: 26,
+
+  // Search depth (log2) — how many potential matches to consider
+  [zlib.constants.ZSTD_c_searchLog]: 5,
+
+  // Target block size in bytes — useful for real-time compression tuning
+  [zlib.constants.ZSTD_c_targetLength]: 0, // 0 = auto
+
+  // Hint for input size — may improve performance slightly
+  [zlib.constants.ZSTD_c_srcSizeHint]: 0,
+
+  // Compression mode for literal bytes (non-matching data)
+  // Options: AUTO (0), HUFFMAN (1), UNCOMPRESSED (2)
+  [zlib.constants.ZSTD_c_literalCompressionMode]: zlib.constants.ZSTD_lcm_auto,
+
+  // ===== Long Distance Matching (LDM) parameters =====
+
+  // Hash table size for LDM (log2)
+  [zlib.constants.ZSTD_c_ldmHashLog]: 26,
+
+  // Minimum match length for LDM to trigger
+  [zlib.constants.ZSTD_c_ldmMinMatch]: 64,
+
+  // Bucket size for LDM hash entries (log2)
+  [zlib.constants.ZSTD_c_ldmBucketSizeLog]: 3,
+
+  // Hashing rate for LDM — higher = less frequent
+  [zlib.constants.ZSTD_c_ldmHashRateLog]: 7,
+}
+```
+
 ## How it works
 
 - **Random transaction data** is generated to simulate real-world payloads.
@@ -76,3 +132,31 @@ This project benchmarks and compares the performance and compression efficiency 
 ## License
 
 MIT
+
+## Example Charts & Screenshots
+
+Below are example charts visualizing benchmark results:
+
+**Compressed Size By Strategy And Level**
+
+![Compressed Size By Strategy And Level](bench/1.png)
+
+**Compression Time By Strategy And Level**
+
+![Compression Time By Strategy And Level](bench/2.png)
+
+**Decompression Time By Strategy And Level**
+
+![Decompression Time By Strategy And Level](bench/3.png)
+
+**Compressed Size (MB) Heatmap**
+
+![Compressed Size (MB) Heatmap](bench/4.png)
+
+**Compression Time (Ms) Heatmap**
+
+![Compression Time (Ms) Heatmap](bench/5.png)
+
+**Zstd Default Level Benchmark**
+
+![Zstd Default Level Benchmark](bench/def.png)
