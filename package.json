@@ -1,0 +1,28 @@
+{
+  "name": "compression-benchmark",
+  "version": "1.0.0",
+  "description": "Benchmarking Gzip vs Zstd (native Node.js zlib) for transaction arrays",
+  "main": "compression-benchmark.js",
+  "scripts": {
+    "benchmark": "ts-node compression-benchmark.ts",
+    "zstd-strategy": "ts-node zstd-strategy-benchmark.ts"
+  },
+  "author": "Rodion",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rodionmish/compression-benchmark"
+  },
+  "keywords": [
+    "benchmark",
+    "compression",
+    "zstd",
+    "gzip",
+    "nodejs",
+    "zlib"
+  ],
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
+  }
+}
