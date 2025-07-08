@@ -16,8 +16,8 @@ This project benchmarks and compares the performance and compression efficiency 
 
 ## Files
 
-- `compression-benchmark.ts` — Main benchmark: compares Gzip and Zstd at different compression levels.
-- `zstd-strategy-benchmark.ts` — Advanced: compares all zstd compression strategies at a fixed level.
+- `src/compression-benchmark.ts` — Main benchmark: compares Gzip and Zstd at different compression levels.
+- `src/zstd-strategy-benchmark.ts` — Advanced: compares all zstd compression strategies at a fixed level.
 
 ## How to Run
 
@@ -33,15 +33,15 @@ This project benchmarks and compares the performance and compression efficiency 
 3. **Run the benchmarks:**
    - With ts-node (recommended for TypeScript):
      ```sh
-     npx ts-node compression-benchmark.ts
-     npx ts-node zstd-strategy-benchmark.ts
+     npx ts-node src/compression-benchmark.ts
+     npx ts-node src/zstd-strategy-benchmark.ts
      ```
    - Or compile to JS and run with node:
      ```sh
-     tsc compression-benchmark.ts
-     tsc zstd-strategy-benchmark.ts
-     node compression-benchmark.js
-     node zstd-strategy-benchmark.js
+     tsc src/compression-benchmark.ts
+     tsc src/zstd-strategy-benchmark.ts
+     node src/compression-benchmark.js
+     node src/zstd-strategy-benchmark.js
      ```
 
 ## Example Output
